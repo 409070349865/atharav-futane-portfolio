@@ -1,0 +1,38 @@
+{
+  "name": "atharav-futane-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "generate:context": "node scripts/generate-portfolio-context.mjs",
+    "predev": "npm run generate:context",
+    "dev": "concurrently -k \"node --watch server/index.js\" \"vite\"",
+    "prebuild": "npm run generate:context",
+    "build": "tsc -b && vite build",
+    "prestart": "npm run generate:context",
+    "start": "node server/index.js",
+    "preview": "vite preview",
+    "pretest": "npm run generate:context",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "framer-motion": "^11.11.17",
+    "helmet": "^8.1.0",
+    "lucide-react": "^0.468.0",
+    "openai": "^5.8.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sql.js": "^1.13.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.2.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.1"
+  }
+}
