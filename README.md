@@ -76,12 +76,13 @@ The included [render.yaml](./render.yaml) configures one Node web service, a per
 2. Review the Blueprint. When prompted, enter:
    - `OPENAI_API_KEY`: create or use a valid API key from your OpenAI account and enter it directly in Render's secret field. Never put it in source code, a `VITE_*` variable, or a chat message.
    - `ADMIN_PASSWORD`: choose a strong, unique password for the private admin page.
-   - `PUBLIC_ORIGIN`: enter the final Render HTTPS origin, for example `https://your-service.onrender.com`, without a trailing slash. If using a custom domain, use that domain instead.
 3. Keep the generated `ADMIN_SESSION_SECRET` private and unchanged. Keep `OPENAI_MODEL` as `gpt-4o-mini` unless you have configured a different supported model.
 4. Apply the Blueprint and wait for the service health check at `/api/health` to pass. The SQLite database is stored at `/var/data/portfolio.sqlite` on the persistent disk.
 5. If the deployment already exists, open **Dashboard → your service → Environment**, replace `OPENAI_API_KEY` with a valid key, save, and choose **Save, rebuild, and deploy**. Do not share the key with anyone or commit it to the repository.
 
 If configuring a Render Web Service manually, use build command `npm ci && npm run build`, start command `npm start`, and attach a persistent disk mounted at `/var/data`. Set `DATABASE_PATH=/var/data/portfolio.sqlite`.
+
+The API validates write requests against the origin of the request itself, so the Render URL and custom domains work without setting `PUBLIC_ORIGIN`. An explicit `PUBLIC_ORIGIN` remains supported when an additional origin must be trusted.
 
 ## Content accuracy
 

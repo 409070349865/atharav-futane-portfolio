@@ -16,8 +16,6 @@ services:
         value: /var/data/portfolio.sqlite
       - key: OPENAI_MODEL
         value: gpt-4o-mini
-      - key: PUBLIC_ORIGIN
-        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: ADMIN_PASSWORD

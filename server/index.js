@@ -115,12 +115,31 @@ const loginLimit = limits(8, 15 * 60 * 1000);
 
 function sameOrigin(req, res, next) {
   const origin = req.get("origin");
+  const host = req.get("host");
+  const requestOrigin = host ? `${req.protocol}://${host}` : null;
   const allowedLocalDevelopmentOrigin = !isProduction &&
     /^https?:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin || "");
-  if (!origin || (origin !== publicOrigin && !allowedLocalDevelopmentOrigin)) {
+  const allowedConfiguredOrigin = matchesOrigin(origin, publicOrigin);
+  const allowedRequestOrigin = matchesOrigin(origin, requestOrigin);
+  if (!allowedConfiguredOrigin && !allowedRequestOrigin && !allowedLocalDevelopmentOrigin) {
     return res.status(403).json({ error: "Request origin is not allowed." });
   }
   next();
+}
+
+function matchesOrigin(origin, expectedOrigin) {
+  if (typeof origin !== "string" || typeof expectedOrigin !== "string") return false;
+  try {
+    const actual = new URL(origin);
+    const expected = new URL(expectedOrigin);
+    const isHttpOrigin = url =>
+      (url.protocol === "http:" || url.protocol === "https:") &&
+      !url.username && !url.password && url.pathname === "/" && !url.search && !url.hash;
+    return isHttpOrigin(actual) && isHttpOrigin(expected) && actual.origin === expected.origin;
+  } catch (error) {
+    if (error instanceof TypeError) return false;
+    throw error;
+  }
 }
 
 function sign(payload) {

@@ -63,9 +63,9 @@ before(async () => {
     cwd: root,
     env: {
       ...process.env,
-      NODE_ENV: "test",
+      NODE_ENV: "production",
       PORT: String(port),
-      PUBLIC_ORIGIN: origin,
+      PUBLIC_ORIGIN: "https://configured.example",
       DATABASE_PATH: join(databaseDirectory, "test.sqlite"),
       ADMIN_PASSWORD: "test-password-for-admin",
       ADMIN_SESSION_SECRET: "test-session-secret-with-more-than-thirty-two-characters",
@@ -144,6 +144,13 @@ test("same-origin enforcement, event validation, and contact submission", async 
     body: JSON.stringify({ type: "page_view" })
   });
   assert.equal(denied.status, 403);
+
+  const configuredOrigin = await fetch(`${origin}/api/analytics`, {
+    method: "POST",
+    headers: { Origin: "https://configured.example", "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "admin_login" })
+  });
+  assert.equal(configuredOrigin.status, 400);
 
   const invalidEvent = await request("/api/analytics", {
     method: "POST", headers: { "Content-Type": "application/json" },
